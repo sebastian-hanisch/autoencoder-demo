@@ -97,7 +97,7 @@ PRESET_HELP = {
     "Linear = PCA": "Ohne versteckte Schichten (Tiefe 0) ist das Autoencoder linear: sein Rekonstruktionsfehler erreicht die PCA-Untergrenze (0.461 gegen 0.461) und der von seinem Decoder aufgespannte Unterraum weicht nach dem Training nur noch um Bruchteile eines Grades von der PCA ab - dasselbe Verfahren, nur per Gradientenabstieg gelernt.",
     "Zu wenige Epochen": "Nach nur 100 Epochen ist das Netz noch nicht trainiert: der Rekonstruktionsfehler liegt bei etwa 0.10 statt 0.023 (über 4 Datensätze das 4-9-fache). Die Demo rechnet einen Referenzlauf mit 2000 Epochen daneben.",
     "Lernrate zu hoch": "Mit Lernrate 0.3 (statt 0.03) springt das Training über das Minimum: der Rekonstruktionsfehler bleibt bei etwa 0.5 - so schlecht wie die PCA - statt 0.023, und die Einbettung verliert Nachbarschaft und Abstände.",
-    "Sonderfahrten: Extreme bleiben erhalten": "5 % Sonderfahrten mit extremen Werten: anders als t-SNE, UMAP und PaCMAP (R² 0.12-0.14) bricht das Autoencoder nicht ein (R² 0.61) - als glatte parametrische Abbildung behält es die Größenordnung der Extreme; PCA (0.76) und Isomap (0.75) bleiben aber besser.",
+    "Sonderfahrten: Extreme bleiben erhalten": "5 % Sonderfahrten mit extremen Werten: anders als t-SNE, UMAP und PaCMAP (R² etwa 0.1-0.35) bricht das Autoencoder nicht ein (R² etwa 0.6-0.8; genau je nach Rechenumgebung) - als glatte parametrische Abbildung behält es die Größenordnung der Extreme; PCA (0.76) und Isomap (0.75) bleiben aber besser.",
     "Gerade Daten: kein Vorteil": "Krümmung 0: die Kennzahlen hängen linear von den Faktoren ab, die PCA ist optimal (R² 0.98) - das nichtlineare Netz erreicht dasselbe (0.98), aber mit einem Vielfachen des Aufwands.",
 }
 PRESET_EXPECTED_BANDS = {

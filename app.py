@@ -378,7 +378,7 @@ elif code == "linear_pca":
 elif code == "extremes_kept":
     st.success(
         f"✅ **Extreme bleiben erhalten**: mit {vd['outlier_pct']} % Sonderfahrten liegt das R² der Faktoren bei {vd['r2']:.2f} - t-SNE {vd['r2_tsne']:.2f}, UMAP {vd['r2_umap']:.2f} und PaCMAP {vd['r2_pacmap']:.2f} brechen ein. "
-        f"PCA ({vd['r2_pca']:.2f}) und Isomap ({vd['r2_iso']:.2f}) bleiben besser. Als glatte parametrische Abbildung staucht das Netz die Extreme nicht an den Rand der Wolke. (Im Test galt das bei 5-10 %, nicht bei 2 %.)"
+        f"PCA ({vd['r2_pca']:.2f}) und Isomap ({vd['r2_iso']:.2f}) bleiben besser. Als glatte parametrische Abbildung staucht das Netz die Extreme nicht an den Rand der Wolke. (Im Test galt das bei 5-10 % deutlich, bei 2 % nicht verlässlich.)"
     )
 elif code == "no_advantage":
     st.info(f"ℹ️ **Kein Vorteil vor der PCA**: die Daten sind gerade (Krümmung 0) - R² der Faktoren {vd['r2']:.2f} (Autoencoder) gegen {vd['r2_pca']:.2f} (PCA); der Rekonstruktionsfehler {vd['mse']:.3f} gegen {vd['mse_pca']:.3f}.")
@@ -459,7 +459,7 @@ st.markdown(
 | **Rekonstruktion / Decoder** | ✅ Fehler **0.021** gegen PCA-Untergrenze 0.456 (mehr als 20-fach kleiner); die anderen Verfahren haben keinen Decoder |
 | **Linear = PCA** | ✅ Hauptwinkel ≤ 0.014°, Fehlerverhältnis 1.000 |
 | **Neue Touren einbetten** | ✅ parametrisch: 1000 neue Touren in etwa 1 ms, die Trainings-Einbettung bleibt unverändert. ⚠️ Aber: R² der neuen Touren 0.62-0.75 (UMAP `transform` 0.88-0.93); Rekonstruktionsfehler neuer Touren 0.10-0.36 gegen 0.02 im Training - **Datenhunger** |
-| **Extreme (Sonderfahrten)** | ✅/⚠️ bei 5 %: R² **0.58** (UMAP 0.36, t-SNE 0.35, PaCMAP 0.30; PCA 0.67, Isomap 0.77), bei 10 %: 0.74 (0.24 / 0.26 / 0.22) - aber bei 2 %: 0.51 (0.62 / 0.66 / 0.58) |
+| **Extreme (Sonderfahrten)** | ✅/⚠️ bei 5 %: R² **0.58** (UMAP 0.36, t-SNE 0.35, PaCMAP 0.30; PCA 0.67, Isomap 0.77), bei 10 %: 0.74 (0.24 / 0.26 / 0.22) - aber bei 2 %: 0.51 (0.62 / 0.66 / 0.58). Lokal gemessen; auf einer anderen Rechenumgebung (Linux, GitHub Actions) fiel der Vorsprung bei 5 % größer (+0.36 statt +0.24), bei 2 % positiv statt negativ aus (+0.07 statt -0.11) |
 | **Faktoren zurückgewinnen** | ❌ R² **0.72** gegen UMAP 0.92, t-SNE 0.89, PaCMAP 0.89 (PCA 0.51); Streuung ±0.12 über Datensätze und Starts; bei Rauschen 0.8: 0.54 (0.90 / 0.80 / 0.88) |
 | **Stabilität** (Start egal) | ❌ mittlere paarweise Abweichung zufälliger Starts (200 Touren, q = 2): Autoencoder 0.42-0.63, t-SNE 0.37-0.53, PaCMAP 0.10-0.43, UMAP 0.01-0.22 |
 | **Globale Struktur** | ⚠️ ferne Paare 0.45 (UMAP 0.60, t-SNE 0.58, PaCMAP 0.34, Isomap 0.89) |

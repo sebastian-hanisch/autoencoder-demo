@@ -37,7 +37,7 @@ def test_preset_stays_inside_its_bands(name):
     for key, expected in C.PRESET_EXPECTED_BANDS[name].items():
         value = measured[key]
         if isinstance(expected, str):
-            assert value == expected, f"{key}: {value}"
+            assert value == expected, f"{key}: {value} (gemessen: { {k: (round(float(v), 3) if isinstance(v, (int, float)) else v) for k, v in measured.items()} })"
         else:
             lo, hi = expected
             assert lo <= value <= hi, f"{key}: {value} nicht in [{lo}, {hi}]"
