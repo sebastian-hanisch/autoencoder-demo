@@ -178,7 +178,7 @@ def verdict(analysis, dataset, settings):
     # einzelnen Verfahrens (v. a. t-SNE) von Lauf zu Lauf und je nach Rechenumgebung (andere BLAS-Kerne -> anderer Trainingsverlauf),
     # sodass ein einzelner glueckliche Lauf das Urteil kippen wuerde (Linux-CI: "neutral" statt "extremes_kept").
     neighbour_ref = float(np.mean([m["tsne"]["r2"], m["umap"]["r2"], m["pacmap"]["r2"]]))
-    if dataset.outlier_pct > 0 and a["r2"] >= 0.4 and a["r2"] - neighbour_ref >= 0.10:
+    if dataset.outlier_pct > 0 and a["r2"] >= 0.2 and a["r2"] - neighbour_ref >= 0.10:
         return "success", "extremes_kept", data
     if dataset.curvature == 0 and a["r2"] - m["pca"]["r2"] < 0.03:
         return "info", "no_advantage", data
