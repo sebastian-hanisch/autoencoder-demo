@@ -256,9 +256,9 @@ def _render(current_step, epoch=None):
         with view_slot.container():
             c1, c2 = st.columns([2, 3])
             c1.markdown(f"**Einbettung (Code) nach Epoche {ep}**")
-            c1.plotly_chart(build_embedding(model.snapshots[ep], z_color, "Code 1", "Code 2"), width="stretch", key="ae_snapshot")
+            c1.plotly_chart(build_embedding(model.snapshots[ep], z_color, "Code 1", "Code 2"), width="stretch", key=f"ae_snapshot_{ep}")
             c2.markdown("**Training**")
-            c2.plotly_chart(build_training(model.loss_history, mse_floor, dict(r2_points), analysis.snapshot_far, marker=ep), width="stretch", key="ae_training")
+            c2.plotly_chart(build_training(model.loss_history, mse_floor, dict(r2_points), analysis.snapshot_far, marker=ep), width="stretch", key=f"ae_training_{ep}")
     else:
         with view_slot.container():
             c1, c2 = st.columns(2)
