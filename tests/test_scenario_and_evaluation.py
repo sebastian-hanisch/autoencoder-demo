@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 import pytest
 from sklearn.manifold import trustworthiness as sk_trustworthiness
@@ -7,6 +9,7 @@ from ae_evaluation import (
     Settings, analyse, anomaly_auc, convergence_rows, decoder_grid, depth_sweep, distance_fidelity, distance_fidelity_split, linear_equals_pca, lr_sweep, make_dataset, out_of_sample, pca_project,
     r2_quadratic, run_ae, stability, timing_sweep, trustworthiness, verdict, width_sweep,
 )
+from ae_isomap import pairwise_distances, residual_variance, safe_corr
 from ae_umap import fit_umap
 
 
@@ -31,6 +34,21 @@ def test_distance_fidelity_is_one_for_a_scaled_copy_and_split_reports_near_and_f
     assert distance_fidelity(3.0 * z, z) > 0.999999
     near, far = distance_fidelity_split(3.0 * z, z)
     assert near > 0.999999 and far > 0.999999
+
+
+def test_a_collapsed_embedding_has_fidelity_zero_instead_of_nan_and_raises_no_warning():
+    """Alle Punkte auf einem Fleck (zusammengebrochener Autoencoder): keine Abstandsinformation, also 0.0 - nicht nan mit RuntimeWarning."""
+    z = np.random.default_rng(3).standard_normal((60, 2))
+    collapsed = np.zeros((60, 2))
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")  # jede Warnung (auch die von numpy) macht den Test rot
+        assert distance_fidelity(collapsed, z) == 0.0
+        assert distance_fidelity_split(collapsed, z) == (0.0, 0.0)
+        assert safe_corr([1.0, 2.0, 3.0], [5.0, 5.0, 5.0]) == 0.0
+        assert safe_corr([1.0], [2.0]) == 0.0
+        assert abs(safe_corr([1.0, 2.0, 3.0], [2.0, 4.0, 6.0]) - 1.0) < 1e-12
+        rv = residual_variance(pairwise_distances(z), np.zeros((60, 2)), 2)
+    assert np.all(np.isfinite(rv)) and np.allclose(rv, 1.0)  # nichts erklärt: Restvarianz 1
 
 
 def test_anomaly_auc_hand_instances():

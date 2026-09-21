@@ -479,7 +479,8 @@ ga, gb = iso_idx[pa], iso_idx[pb]
 
 
 def _norm(d):
-    return d / d.mean()
+    m = d.mean()
+    return d / m if m > 0 else np.zeros_like(d)  # zusammengebrochene Einbettung: alle Abstände 0
 
 
 latent = _norm(np.linalg.norm(dataset.z[ga] - dataset.z[gb], axis=1))
@@ -492,6 +493,7 @@ st.caption(
     f"Jeder Punkt ein Tourenpaar: Abstand in der 2-D-Einbettung gegen den Abstand der wahren Faktoren; auf der gestrichelten Diagonale wäre die Einbettung abstandstreu. Korrelation für **nahe** Paare: "
     f"Autoencoder {metrics['ae']['near']:.2f}, UMAP {metrics['umap']['near']:.2f}, Isomap {metrics['isomap']['near']:.2f} - für **ferne** Paare: Autoencoder {metrics['ae']['far']:.2f}, UMAP {metrics['umap']['far']:.2f}, "
     f"Isomap {metrics['isomap']['far']:.2f}."
+    + (" Der Autoencoder hat hier alle Punkte auf denselben Fleck abgebildet (zusammengebrochen): Er trägt keine Abstandsinformation, deshalb 0,00 und keine Streuung im Diagramm." if not ae_d.any() else "")
 )
 
 st.markdown("**🆕 Neue Touren einbetten (Out-of-sample)**")

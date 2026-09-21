@@ -16,7 +16,7 @@ import numpy as np
 
 import ae_constants as C
 from ae_algorithm import decode, encode, fit_autoencoder, linear_angle_curve, pca_subspace, reconstruct
-from ae_isomap import fit_isomap, pairwise_distances, standardize
+from ae_isomap import fit_isomap, pairwise_distances, safe_corr, standardize
 from ae_pacmap import fit_pacmap
 from ae_pacmap import transform as pacmap_transform
 from ae_scenario import generate_dataset
@@ -62,7 +62,7 @@ def pca_project(X, n_components=2):
 
 def distance_fidelity(coords2, z):
     iu = np.triu_indices(len(z), 1)
-    return float(np.corrcoef(pairwise_distances(coords2)[iu], pairwise_distances(z)[iu])[0, 1])
+    return safe_corr(pairwise_distances(coords2)[iu], pairwise_distances(z)[iu])
 
 
 def distance_fidelity_split(coords2, z):
@@ -71,7 +71,7 @@ def distance_fidelity_split(coords2, z):
     dz = pairwise_distances(z)[iu]
     dc = pairwise_distances(coords2)[iu]
     near = dz <= np.median(dz)
-    return float(np.corrcoef(dz[near], dc[near])[0, 1]), float(np.corrcoef(dz[~near], dc[~near])[0, 1])
+    return safe_corr(dz[near], dc[near]), safe_corr(dz[~near], dc[~near])
 
 
 def make_dataset(n_tours, q, curvature, noise, outlier_pct, seed):

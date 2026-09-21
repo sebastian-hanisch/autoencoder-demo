@@ -50,7 +50,10 @@ def test_extreme_settings_render():
         at.session_state["width_select"] = min(C.WIDTH_CHOICES)
         at.session_state["n_epochs_slider"] = C.N_EPOCHS_MIN
         at.session_state["activation_select"] = "relu"
-    _run(small)
+    at = _run(small)
+    # Ein zusammengebrochener Autoencoder darf nirgends "nan" zeigen (früher: "Autoencoder nan" in der Bildunterschrift)
+    texts = [m.value for m in at.markdown] + [c.value for c in at.caption]
+    assert not [t for t in texts if re.search(r"\bnan\b", t, re.I)]
 
     def large(at):
         at.session_state["n_tours_slider"] = 400

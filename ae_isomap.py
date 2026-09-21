@@ -19,6 +19,15 @@ def standardize(X):
     return (X - X.mean(0)) / np.where(scale > 0, scale, 1.0)
 
 
+def safe_corr(a, b):
+    """Pearson-Korrelation; 0.0, wenn einer der Vektoren keine Streuung hat (z. B. eine zusammengebrochene Einbettung, in der
+    alle Punkte aufeinanderfallen). np.corrcoef liefert dort nan samt Warnung; "keine Abstandsinformation" heißt hier 0."""
+    a, b = np.asarray(a, float), np.asarray(b, float)
+    if len(a) < 2 or not (np.ptp(a) > 0 and np.ptp(b) > 0):
+        return 0.0
+    return float(np.corrcoef(a, b)[0, 1])
+
+
 def pairwise_distances(Z):
     sq = (Z ** 2).sum(1)
     d2 = sq[:, None] + sq[None, :] - 2.0 * Z @ Z.T
@@ -142,5 +151,5 @@ def residual_variance(geodesic, embedding_full_coords, n_dims):
     out = []
     for d in range(1, n_dims + 1):
         e = pairwise_distances(embedding_full_coords[:, :d])[iu]
-        out.append(1.0 - float(np.corrcoef(g, e)[0, 1]) ** 2)
+        out.append(1.0 - safe_corr(g, e) ** 2)
     return np.array(out)
