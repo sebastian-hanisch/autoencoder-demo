@@ -21,7 +21,7 @@ pca-demo → isomap-demo | lle-demo | tsne-demo → umap-demo → pacmap-demo
 | Neue Touren einbetten | ✅ parametrisch (1000 Touren in ≈ 1 ms, Trainings-Einbettung bleibt unverändert). ⚠️ Aber R² der neuen Touren 0.62–0.75 (UMAP `transform` 0.88–0.93) und Rekonstruktionsfehler 0.10–0.36 gegen 0.02 im Training – **Datenhunger** |
 | Extreme (Sonderfahrten) | ✅/⚠️ 5 %: R² **0.58** (UMAP 0.36, t-SNE 0.35, PaCMAP 0.30; PCA 0.67, Isomap 0.77); 10 %: 0.74 (0.24 / 0.26 / 0.22) – aber 2 %: 0.51 (0.62 / 0.66 / 0.58). Lokal gemessen; siehe „Rechenumgebung“ unten |
 | Faktoren zurückgewinnen | ❌ R² **0.72** (UMAP 0.92, t-SNE 0.89, PaCMAP 0.89, PCA 0.51), Streuung ±0.12 über Datensätze und Starts; Rauschen 0.8: 0.54 (0.90 / 0.80 / 0.88) |
-| Stabilität (Start egal) | ❌ mittlere paarweise Abweichung zufälliger Starts (200 Touren, q = 2): Autoencoder 0.42–0.63, t-SNE 0.37–0.53, PaCMAP 0.10–0.43, UMAP 0.01–0.22 |
+| Stabilität (Start egal) | ❌ typische (Median) paarweise Abweichung zufälliger Starts (200 Touren, q = 2): Autoencoder 0.42–0.63, t-SNE 0.37–0.53, PaCMAP 0.10–0.43, UMAP 0.01–0.22 |
 | Globale Struktur | ⚠️ ferne Paare 0.45 (UMAP 0.60, t-SNE 0.58, PaCMAP 0.34, Isomap 0.89) |
 | Rechenzeit | ⚠️ Training 1.1 s bei n = 600 (PaCMAP 0.4 s, UMAP 1.3 s, t-SNE 4.8 s); danach fast kostenlos |
 
@@ -136,6 +136,4 @@ pytest tests/ -v
 
 ---
 
-Teil des [Operations-Research-Demo-Portfolios](https://sebastianhanisch.net/demos.html) von
-[Sebastian Hanisch](https://sebastianhanisch.net) – Operations Research und Machine Learning.
-Interesse an einer maßgeschneiderten Lösung? [Kontakt aufnehmen](https://sebastianhanisch.net/kontakt.html).
+Diese Demo ist Teil des Portfolios von [Sebastian Hanisch](https://sebastianhanisch.net) – Operations Research und Machine Learning ([Über mich](https://sebastianhanisch.net/ueber-mich.html)). Mehr zur Reihe: [Dimensionsreduktion: von PCA bis Autoencoder](https://sebastianhanisch.net/konzepte-dimensionsreduktion.html).

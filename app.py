@@ -461,7 +461,7 @@ st.markdown(
 | **Neue Touren einbetten** | ✅ parametrisch: 1000 neue Touren in etwa 1 ms, die Trainings-Einbettung bleibt unverändert. ⚠️ Aber: R² der neuen Touren 0.62-0.75 (UMAP `transform` 0.88-0.93); Rekonstruktionsfehler neuer Touren 0.10-0.36 gegen 0.02 im Training - **Datenhunger** |
 | **Extreme (Sonderfahrten)** | ✅/⚠️ bei 5 %: R² **0.58** (UMAP 0.36, t-SNE 0.35, PaCMAP 0.30; PCA 0.67, Isomap 0.77), bei 10 %: 0.74 (0.24 / 0.26 / 0.22) - aber bei 2 %: 0.51 (0.62 / 0.66 / 0.58). Lokal gemessen; auf einer anderen Rechenumgebung (Linux, GitHub Actions) fiel der Vorsprung bei 5 % größer (+0.36 statt +0.24), bei 2 % positiv statt negativ aus (+0.07 statt -0.11) |
 | **Faktoren zurückgewinnen** | ❌ R² **0.72** gegen UMAP 0.92, t-SNE 0.89, PaCMAP 0.89 (PCA 0.51); Streuung ±0.12 über Datensätze und Starts; bei Rauschen 0.8: 0.54 (0.90 / 0.80 / 0.88) |
-| **Stabilität** (Start egal) | ❌ mittlere paarweise Abweichung zufälliger Starts (200 Touren, q = 2): Autoencoder 0.42-0.63, t-SNE 0.37-0.53, PaCMAP 0.10-0.43, UMAP 0.01-0.22 |
+| **Stabilität** (Start egal) | ❌ typische (Median) paarweise Abweichung zufälliger Starts (200 Touren, q = 2): Autoencoder 0.42-0.63, t-SNE 0.37-0.53, PaCMAP 0.10-0.43, UMAP 0.01-0.22 |
 | **Globale Struktur** | ⚠️ ferne Paare 0.45 (UMAP 0.60, t-SNE 0.58, PaCMAP 0.34, Isomap 0.89) |
 | **Rechenzeit** | ⚠️ Training 1.1 s bei n = 600 (PaCMAP 0.4 s, UMAP 1.3 s, t-SNE 4.8 s); dafür danach fast kostenlos |
 
@@ -517,7 +517,7 @@ if st.session_state.get("oos_on"):
 
 st.markdown("**🔀 Stabilität: Autoencoder, PaCMAP, UMAP und t-SNE auf denselben Datensätzen**")
 st.caption(
-    "Wie stark hängt das Bild vom zufälligen Start ab? Je Datensatz vier zufällige Starts (beim Autoencoder: Anfangsgewichte); gemessen wird der **mittlere paarweise Procrustes-Abstand** (nach bester Drehung/Spiegelung; "
+    "Wie stark hängt das Bild vom zufälligen Start ab? Je Datensatz vier zufällige Starts (beim Autoencoder: Anfangsgewichte); gemessen wird der **typische paarweise Procrustes-Abstand** (Median der sechs Paare je Verfahren; nach bester Drehung/Spiegelung; "
     "0 = gleiches Bild, 1 = unabhängig) - für alle Verfahren auf denselben vier festen Datensätzen mit 200 Touren und Ihren Datenreglern; das Autoencoder mit Ihren Einstellungen, die anderen mit ihren Standards. Dauert etwa 25 Sekunden."
 )
 if st.button("🔀 Stabilität vergleichen", key="stability_start"):
@@ -527,7 +527,7 @@ if st.session_state.get("stability_on"):
         stab = _stability(int(q), float(curvature), float(noise), int(outlier_pct), settings)
     st.plotly_chart(build_stability_compare(stab), width="stretch", key="stability_plot")
     st.caption(
-        "Mittlere paarweise Abstände (Autoencoder / PaCMAP / UMAP / t-SNE) je Datensatz: " + "; ".join(f"{r['ae']:.2f} / {r['pacmap']:.2f} / {r['umap']:.2f} / {r['tsne']:.2f}" for r in stab)
+        "Typische (Median) paarweise Abstände (Autoencoder / PaCMAP / UMAP / t-SNE) je Datensatz: " + "; ".join(f"{r['ae']:.2f} / {r['pacmap']:.2f} / {r['umap']:.2f} / {r['tsne']:.2f}" for r in stab)
         + f". Im Mittel: Autoencoder {np.mean([r['ae'] for r in stab]):.2f}, PaCMAP {np.mean([r['pacmap'] for r in stab]):.2f}, UMAP {np.mean([r['umap'] for r in stab]):.2f}, t-SNE {np.mean([r['tsne'] for r in stab]):.2f}."
     )
 
@@ -592,6 +592,6 @@ st.markdown("---")
 
 st.caption(
     "Diese Demo ist Teil des Portfolios von [Sebastian Hanisch](https://sebastianhanisch.net) – "
-    "Operations Research und Machine Learning. Interesse an einer maßgeschneiderten Lösung für "
-    "Ihr Unternehmen? [Kontakt aufnehmen](https://sebastianhanisch.net/kontakt.html)"
+    "Operations Research und Machine Learning ([Über mich](https://sebastianhanisch.net/ueber-mich.html)). "
+    "Mehr zur Reihe: [Dimensionsreduktion: von PCA bis Autoencoder](https://sebastianhanisch.net/konzepte-dimensionsreduktion.html)."
 )
