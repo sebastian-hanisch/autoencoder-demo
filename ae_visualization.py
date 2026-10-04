@@ -160,12 +160,12 @@ def build_distance_fidelity(latent_pairs, panels):
 
 
 def build_stability_compare(rows):
-    """Mittlere paarweise Procrustes-Abstände zufälliger Starts je Datensatz für Autoencoder, PaCMAP, UMAP und t-SNE (niedriger = stabiler)."""
+    """Typische (Median) paarweise Procrustes-Abstände zufälliger Starts je Datensatz für Autoencoder, PaCMAP, UMAP und t-SNE (niedriger = stabiler)."""
     labels = [f"Datensatz {i + 1}" for i in range(len(rows))]
     fig = go.Figure()
     for key, name, color in (("ae", "Autoencoder", BLUE), ("pacmap", "PaCMAP", ORANGE), ("umap", "UMAP", PURPLE), ("tsne", "t-SNE", RED)):
         fig.add_trace(go.Bar(x=labels, y=[r[key] for r in rows], name=name, marker_color=color, hovertemplate="%{x}: %{y:.2f}<extra>" + name + "</extra>"))
-    fig.update_yaxes(title="mittlerer Procrustes-Abstand", range=[0, 1])
+    fig.update_yaxes(title="typischer Procrustes-Abstand (Median)", range=[0, 1])
     fig.update_layout(template="plotly_white", barmode="group", height=320, margin=dict(l=10, r=10, t=20, b=10), legend=dict(orientation="h", y=-0.25))
     return lock_axes(fig)
 

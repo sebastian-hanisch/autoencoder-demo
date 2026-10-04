@@ -163,7 +163,7 @@ def test_sweep_and_stability_seeds_are_separate_from_demo_seeds():
 
 
 def test_autoencoder_starts_disagree_far_more_than_umap_starts():
-    """Belegt die Tabelle in der App (q = 2, 200 Touren, 4 Datensätze): mittlere paarweise Abweichung Autoencoder 0.42-0.63, UMAP 0.01-0.22."""
+    """Belegt die Tabelle in der App (q = 2, 200 Touren, 4 Datensätze): typische (Median) paarweise Abweichung Autoencoder 0.42-0.63, UMAP 0.01-0.22."""
     rows = stability(2, 1.0, 0.25, 0)
     assert [r["seed"] for r in rows] == list(C.STABILITY_SEEDS) and all(len(r["embeddings"]) == 4 for r in rows)
     ae, um = (np.mean([r[k] for r in rows]) for k in ("ae", "umap"))

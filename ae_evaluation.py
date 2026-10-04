@@ -262,7 +262,7 @@ def _median_pairwise(embeddings):
 
 
 def stability(q, curvature, noise, outlier_pct, settings=None, n_tours=200, seeds=C.STABILITY_SEEDS, starts=C.STABILITY_STARTS):
-    """Fairer Vergleich auf denselben Datensätzen: je Datensatz vier zufällige Starts, mittlere paarweise Procrustes-Abstände für Autoencoder (Gewichts-Initialisierung), PaCMAP, UMAP und t-SNE."""
+    """Fairer Vergleich auf denselben Datensätzen: je Datensatz vier zufällige Starts, mediane paarweise Procrustes-Abstände für Autoencoder (Gewichts-Initialisierung), PaCMAP, UMAP und t-SNE."""
     base = settings or Settings()
     out = []
     for seed in seeds:

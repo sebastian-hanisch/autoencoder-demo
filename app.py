@@ -182,7 +182,7 @@ with st.sidebar:
     )
     init_start = st.selectbox(
         "Start der Gewichte", C.INIT_STARTS, key="init_start_select", format_func=lambda i: f"Start {i}",
-        help="Zufällige Anfangsgewichte. Verschiedene Starts liefern verschiedene Bilder - im Test wichen sie um einen mittleren Procrustes-Abstand von 0.4-0.6 voneinander ab (siehe Stabilität unten).",
+        help="Zufällige Anfangsgewichte. Verschiedene Starts liefern verschiedene Bilder - im Test wichen sie um einen typischen (Median-)Procrustes-Abstand von 0.4-0.6 voneinander ab (siehe Stabilität unten).",
     )
 
     st.button("🎲 Neue Touren generieren", width="stretch", on_click=randomize_seed, help="Würfelt einen neuen Zufalls-Seed für die Touren.")
