@@ -96,7 +96,7 @@ def test_verdict_codes_for_outliers_and_flat_data():
 
 
 def test_the_decoder_advantage_holds_over_four_datasets():
-    """Belegt die Tabelle in der App: Rekonstruktionsfehler 0.021 gegen PCA-Untergrenze 0.456 (mehr als 20-fach)."""
+    """Belegt die Tabelle in der App: Rekonstruktionsfehler 0.022 gegen PCA-Untergrenze 0.456 (mehr als 20-fach)."""
     ae, floor = [], []
     for seed in range(100_000, 100_004):
         a = analyse(make_dataset(300, 2, 1.0, 0.25, 0, seed), Settings())

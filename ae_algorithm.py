@@ -108,7 +108,7 @@ class AEModel:
     embedding: np.ndarray            # [n, 2] Engpass-Werte der Trainings-Touren
     snapshots: dict                  # Epoche -> Einbettung (Kopie), inkl. 0 und n_epochs
     weight_snapshots: dict           # Epoche -> (Gewichte, Biases) (Kopien)
-    loss_history: np.ndarray         # [n_epochs] Trainingsverlust
+    loss_history: np.ndarray         # [n_epochs + 1] Trainingsverlust, Index k = nach k Schritten (0 = untrainiert, letzter = fertiges Netz)
     mean: np.ndarray
     scale: np.ndarray
     Z: np.ndarray
@@ -146,7 +146,7 @@ def fit_autoencoder(X, depth=1, width=16, activation="tanh", lr=0.01, n_epochs=1
     v = [np.zeros_like(p) for p in params]
     n_layers = len(weights)
     wanted = set(snapshot_epochs(n_epochs))
-    loss_history = np.zeros(n_epochs)
+    loss_history = np.zeros(n_epochs + 1)
 
     def code(ws, bs):
         return forward(ws, bs, Z, activation, depth)[depth + 1]
@@ -154,7 +154,7 @@ def fit_autoencoder(X, depth=1, width=16, activation="tanh", lr=0.01, n_epochs=1
     weight_snapshots = {0: ([w.copy() for w in weights], [b.copy() for b in biases])} if 0 in wanted else {}
     for epoch in range(1, n_epochs + 1):
         loss, gw, gb = loss_and_gradients(weights, biases, Z, activation, depth)
-        loss_history[epoch - 1] = loss
+        loss_history[epoch - 1] = loss                                              # Verlust vor Schritt `epoch` = nach epoch - 1 Schritten
         lr_t = lr * np.sqrt(1.0 - BETA2 ** epoch) / (1.0 - BETA1 ** epoch)
         for k, g in enumerate(gw + gb):
             m[k] = BETA1 * m[k] + (1 - BETA1) * g
@@ -163,6 +163,7 @@ def fit_autoencoder(X, depth=1, width=16, activation="tanh", lr=0.01, n_epochs=1
         if epoch in wanted:
             snapshots[epoch] = code(weights, biases).copy()
             weight_snapshots[epoch] = ([w.copy() for w in weights], [b.copy() for b in biases])
+    loss_history[n_epochs] = loss_and_gradients(weights, biases, Z, activation, depth)[0]      # Verlust des fertigen Netzes
     return AEModel(weights=weights, biases=biases, activation=activation, depth=depth, width=width, embedding=code(weights, biases), snapshots=snapshots, weight_snapshots=weight_snapshots,
                    loss_history=loss_history, mean=mean, scale=scale, Z=Z, lr=float(lr), n_epochs=int(n_epochs), seed=int(seed))
 

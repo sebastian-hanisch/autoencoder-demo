@@ -74,7 +74,7 @@ def build_embedding(coords, color, title_x, title_y, label="latenter Faktor 1", 
 def build_training(loss_history, mse_floor, snapshot_r2, snapshot_far, marker=None):
     """Trainingsverlauf: Rekonstruktionsfehler je Epoche (log) mit der PCA-Untergrenze, R² der wahren Faktoren und Abstandstreue ferner Paare an den Schnappschüssen."""
     fig = make_subplots(rows=1, cols=3, subplot_titles=("Rekonstruktionsfehler (MSE)", "R² der wahren Faktoren", "Abstandstreue ferner Paare"))
-    epochs = np.arange(1, len(loss_history) + 1)
+    epochs = np.arange(len(loss_history))                                  # Index k = nach k Epochen (0 fällt auf der Log-Achse weg)
     fig.add_trace(go.Scatter(x=epochs, y=loss_history, mode="lines", line=dict(color=BLUE, width=3), showlegend=False, hovertemplate="Epoche %{x}: %{y:.3f}<extra></extra>"), row=1, col=1)
     fig.add_hline(y=mse_floor, line_dash="dash", line_color=RED, row=1, col=1, annotation_text="PCA-Untergrenze", annotation_position="top right")
     r2, far = sorted(snapshot_r2.items()), sorted(snapshot_far.items())

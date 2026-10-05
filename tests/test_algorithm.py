@@ -63,7 +63,7 @@ def test_training_is_deterministic_records_snapshots_and_the_loss_falls():
     m1, m2 = fit_autoencoder(ds.X, 1, 8, "tanh", 0.03, 200, 0), fit_autoencoder(ds.X, 1, 8, "tanh", 0.03, 200, 0)
     assert np.array_equal(m1.embedding, m2.embedding) and not np.array_equal(m1.embedding, fit_autoencoder(ds.X, 1, 8, "tanh", 0.03, 200, 1).embedding)
     assert set(m1.snapshots) == set(snapshot_epochs(200)) == set(m1.weight_snapshots) and np.array_equal(m1.snapshots[200], m1.embedding)
-    assert m1.loss_history.shape == (200,) and m1.loss_history[-1] < 0.3 * m1.loss_history[0] and m1.n_parameters == n_parameters(layer_sizes(12, 1, 8))
+    assert m1.loss_history.shape == (201,) and m1.loss_history[-1] < 0.3 * m1.loss_history[0] and m1.n_parameters == n_parameters(layer_sizes(12, 1, 8))
 
 
 def test_encode_of_the_training_tours_equals_the_training_embedding_and_reconstruct_equals_decode_of_encode():
@@ -115,7 +115,7 @@ def test_linear_angle_curve_needs_a_linear_network():
 
 
 def test_nonlinear_autoencoder_reconstructs_far_better_than_the_pca_floor_on_the_curved_surface():
-    """Belegt 'Rekonstruktion': mittlerer Fehler 0.021 gegen PCA-Untergrenze 0.456 (mehr als 20-fach) - hier mit Sicherheitsabstand: unter 20 % der Untergrenze, über drei Datensätze."""
+    """Belegt 'Rekonstruktion': mittlerer Fehler 0.022 gegen PCA-Untergrenze 0.456 (mehr als 20-fach) - hier mit Sicherheitsabstand: unter 20 % der Untergrenze, über drei Datensätze."""
     for seed in (100_000, 100_001, 100_002):
         ds = _data(seed=seed)
         m = fit_autoencoder(ds.X, 2, 16, "tanh", 0.03, 1500, 0)
@@ -133,3 +133,16 @@ def test_copied_isomap_tsne_umap_pacmap_and_scenario_match_their_reference_value
     assert (pac.n_neighbors, pac.n_mn, pac.n_fp) == (10, 5, 20) and np.allclose(find_weight(0, (100, 100, 250)), (1000.0, 2.0, 1.0))
     assert procrustes_disparity(np.eye(2), np.eye(2) * 3) < 1e-12
     assert abs(float(ds.X.sum()) - 14553337.310875032) < 1e-6 and abs(float(generate_dataset(200, 3, 0.4, 0.3, 5, 42).X.sum()) - 10763498.969287368) < 1e-6
+
+
+def test_loss_history_index_k_is_the_loss_after_k_steps():
+    """Index 0 = untrainiertes Netz, letzter Index = fertiges Netz (die Schleife misst vor dem Schritt; ohne den Schlusswert zeigte `loss` ein Netz, das es nie gab)."""
+    ds = _data(120)
+    m = fit_autoencoder(ds.X, 1, 8, "tanh", 0.03, 30, 0)
+    assert m.loss_history.shape == (31,)
+    w0, b0 = init_parameters(layer_sizes(12, 1, 8), "tanh", 0)
+    assert np.isclose(m.loss_history[0], loss_and_gradients(w0, b0, m.Z, "tanh", 1)[0], rtol=1e-12)
+    assert np.isclose(m.loss_history[-1], reconstruct(m, ds.X)[1].mean(), rtol=1e-10) and m.loss == m.loss_history[-1]
+    for k in (5, 17):                                                              # Zwischenstand = Lauf mit k Epochen (gleiche Adam-Schritte)
+        assert np.isclose(fit_autoencoder(ds.X, 1, 8, "tanh", 0.03, k, 0).loss, m.loss_history[k], rtol=1e-10)
+    assert fit_autoencoder(ds.X, 1, 8, "tanh", 0.03, 0, 0).loss_history.shape == (1,)

@@ -16,9 +16,9 @@ pca-demo → isomap-demo | lle-demo | tsne-demo → umap-demo → pacmap-demo
 
 | Frage | Ergebnis (300 Touren, 4 feste Datensätze, wenn nicht anders angegeben) |
 |---|---|
-| Rekonstruktion / Decoder | ✅ Fehler **0.021** gegen PCA-Untergrenze 0.456 (mehr als 20-fach kleiner); die anderen Verfahren haben keinen Decoder |
+| Rekonstruktion / Decoder | ✅ Fehler **0.022** gegen PCA-Untergrenze 0.456 (mehr als 20-fach kleiner); die anderen Verfahren haben keinen Decoder |
 | Linear = PCA | ✅ größter Hauptwinkel nach 3000 Epochen ≤ **0.014°**, Fehlerverhältnis 1.000 |
-| Neue Touren einbetten | ✅ parametrisch (1000 Touren in ≈ 1 ms, Trainings-Einbettung bleibt unverändert). ⚠️ Aber R² der neuen Touren 0.62–0.75 (UMAP `transform` 0.88–0.93) und Rekonstruktionsfehler 0.10–0.36 gegen 0.02 im Training – **Datenhunger** |
+| Neue Touren einbetten | ✅ parametrisch (1000 Touren in ≈ 1 ms, Trainings-Einbettung bleibt unverändert). ⚠️ Aber R² der neuen Touren 0.62–0.74 (UMAP `transform` 0.88–0.93) und Rekonstruktionsfehler 0.10–0.36 gegen 0.02 im Training – **Datenhunger** |
 | Extreme (Sonderfahrten) | ✅/⚠️ 5 %: R² **0.58** (UMAP 0.36, t-SNE 0.35, PaCMAP 0.30; PCA 0.67, Isomap 0.77); 10 %: 0.74 (0.24 / 0.26 / 0.22) – aber 2 %: 0.51 (0.62 / 0.66 / 0.58). Lokal gemessen; siehe „Rechenumgebung“ unten |
 | Faktoren zurückgewinnen | ❌ R² **0.72** (UMAP 0.92, t-SNE 0.89, PaCMAP 0.89, PCA 0.51), Streuung ±0.12 über Datensätze und Starts; Rauschen 0.8: 0.54 (0.90 / 0.80 / 0.88) |
 | Stabilität (Start egal) | ❌ typische (Median) paarweise Abweichung zufälliger Starts (200 Touren, q = 2): Autoencoder 0.42–0.63, t-SNE 0.37–0.53, PaCMAP 0.10–0.43, UMAP 0.01–0.22 |
@@ -45,8 +45,8 @@ Messwerte (Seed 7, 300 Touren, q = 2, Tiefe 2, Breite 16, tanh, Lernrate 0.03, 2
 |---|---|
 | Gekrümmte Fläche | Rekonstruktionsfehler **0.023** gegen 0.461 (PCA-Untergrenze); R² 0.95 (**glücklicher Datensatz/Start** – im Mittel über 4 Datensätze 0.72), UMAP 0.88, t-SNE 0.93, PaCMAP 0.80, Isomap 0.98, PCA 0.50 |
 | Tiefe 0 | Fehler 0.461 = Untergrenze, Hauptwinkel 0.0002°, R² 0.50 = PCA |
-| 100 Epochen | Fehler **0.099** statt 0.023 (über 4 Datensätze das 4–9-fache); R² leidet kaum |
-| Lernrate 0.3 | Fehler **0.48** (drei weitere Datensätze: 0.62–0.64) – so schlecht wie die PCA, R² 0.55, ferne Paare 0.01 |
+| 100 Epochen | Fehler **0.098** statt 0.023 (Seeds 7–10: das 4–7-fache); R² leidet kaum |
+| Lernrate 0.3 | Fehler **0.48** (Seeds 8–10: 0.62–0.77) – so schlecht wie die PCA, R² 0.55, ferne Paare 0.01 |
 | 5 % Sonderfahrten | R² **0.61**, UMAP 0.14, t-SNE 0.12, PaCMAP 0.14, PCA 0.76, Isomap 0.75 |
 | Gerade Daten | R² 0.98 = PCA 0.98: **kein Vorteil** |
 | Breite 2 | Fehler 0.462 – nicht besser als die PCA (zu schmale versteckte Schicht) |
@@ -54,12 +54,12 @@ Messwerte (Seed 7, 300 Touren, q = 2, Tiefe 2, Breite 16, tanh, Lernrate 0.03, 2
 **Fairer Vergleich über 4 Datensätze** (300 Touren, feste Seeds 100000–100003, Start 1; Mittel von R² / nahe / ferne Paare / Trustworthiness): Standard – Autoencoder 0.72 / 0.57 / 0.45 / 0.99, UMAP 0.92 / 0.72 / 0.60 / 0.98, t-SNE 0.89 / 0.68 / 0.58 / 0.99,
 PaCMAP 0.89 / 0.53 / 0.34 / 0.98, Isomap 0.98 / 0.91 / 0.89 / 0.99, PCA 0.51 / 0.61 / 0.38 / 0.86. q = 3: R² 0.32 (UMAP 0.55, t-SNE 0.38, PaCMAP 0.41). Rauschen 0.8: 0.54 (0.90 / 0.80 / 0.88). Gerade Daten: 0.98 (UMAP 0.92, PCA 0.99).
 Sonderfahrten (R² Autoencoder / UMAP / t-SNE / PaCMAP; PCA / Isomap): 2 % 0.51 / 0.62 / 0.66 / 0.58 (0.66 / 0.78); 5 % 0.58 / 0.36 / 0.35 / 0.30 (0.67 / 0.77); 10 % 0.74 / 0.24 / 0.26 / 0.22 (0.77 / 0.81).
-Rekonstruktionsfehler Autoencoder / PCA-Untergrenze: Standard 0.021 / 0.456; q = 3: 0.100 / 0.52; Rauschen 0.8: 0.136 / 0.51; 2 %: 0.068 / 0.24; **5 %: 0.116 / 0.062** – mit Extremen rekonstruiert das Netz *schlechter* als die PCA-Untergrenze;
-10 %: 0.021 / 0.042.
+Rekonstruktionsfehler Autoencoder / PCA-Untergrenze: Standard 0.022 / 0.456; q = 3: 0.100 / 0.52; Rauschen 0.8: 0.136 / 0.51; 2 %: 0.068 / 0.24; **5 %: 0.116 / 0.062** – mit Extremen rekonstruiert das Netz *schlechter* als die PCA-Untergrenze;
+10 %: 0.020 / 0.042.
 
-**Hyperparameter** (300 Touren, 5 Datensätze × 3 Starts; Mittel R² / Fehler): Epochen 50: 0.71 / 0.314, 100: 0.77 / 0.131, 300: 0.77 / 0.039, 500: 0.78 / 0.030, 1000: 0.79 / 0.026, 2000: 0.79 / 0.022, 4000: 0.80 / 0.021. Lernrate 0.001: 0.76 / 0.033, 0.003: 0.71 / 0.023,
-0.01: 0.77 / 0.022, 0.03: 0.79 / 0.022, 0.1: 0.75 / 0.039 (Bereich 0.022–0.089), 0.3: 0.39 / 0.605. Tiefe 0: 0.50 / 0.458, 1: 0.74 / 0.038, 2: 0.79 / 0.022, 3: 0.62 / 0.024. Breite 2: 0.51 / 0.462, 4: 0.80 / 0.189, 8: 0.75 / 0.045, 16: 0.79 / 0.022,
-32: 0.74 / 0.020, 64: 0.67 / 0.018. Aktivierung tanh 0.79 / 0.022, sigmoid 0.79 / 0.022, ReLU 0.63 / 0.049. Das R² streut mit ±0.12–0.18 über Datensätze und Starts; die **Live-Sweeps der App** (200 Touren, 800 Epochen, 3 × 2 Läufe) zeigen die Streuung als Fehlerbalken.
+**Hyperparameter** (300 Touren, Datensatz-Seeds 100000–100004 × Start 1–3, Standardwerte bis auf den variierten Regler; Mittel R² / Fehler des fertigen Netzes): Epochen 50: 0.69 / 0.311, 100: 0.74 / 0.138, 300: 0.74 / 0.039, 500: 0.75 / 0.030, 1000: 0.75 / 0.026, 2000: 0.76 / 0.023, 4000: 0.76 / 0.022. Lernrate 0.001: 0.74 / 0.035, 0.003: 0.69 / 0.023,
+0.01: 0.73 / 0.022, 0.03: 0.76 / 0.023, 0.1: 0.69 / 0.035 (Bereich 0.022–0.083), 0.3: 0.38 / 0.612. Tiefe 0: 0.50 / 0.458, 1: 0.77 / 0.036, 2: 0.76 / 0.023, 3: 0.64 / 0.023. Breite 2: 0.51 / 0.462, 4: 0.76 / 0.198, 8: 0.78 / 0.042, 16: 0.76 / 0.023,
+32: 0.76 / 0.020, 64: 0.67 / 0.018. Aktivierung tanh 0.76 / 0.023, sigmoid 0.75 / 0.022, ReLU 0.59 / 0.049. Das R² streut mit ±0.10–0.19 über Datensätze und Starts; die **Live-Sweeps der App** (200 Touren, 800 Epochen, 3 × 2 Läufe) zeigen die Streuung als Fehlerbalken.
 Tiefer und breiter rekonstruiert besser, findet die Faktoren aber nicht besser.
 
 **Linear = PCA** (4 Datensätze, 3000 Epochen): größter Hauptwinkel 0.0067° / 0.0093° / 0.0136° / 0.0°, Fehlerverhältnis 1.0000; nach 79 Epochen noch 1.3°–27°, nach 338 Epochen 0.12°–0.19°.
@@ -69,8 +69,8 @@ Tiefer und breiter rekonstruiert besser, findet die Faktoren aber nicht besser.
 **Stabilität** (Median der sechs paarweisen Procrustes-Abstände von vier zufälligen Starts, 200 Touren, 4 feste Datensätze; Autoencoder / PaCMAP / UMAP / t-SNE): q = 2: 0.54 / 0.11 / 0.01 / 0.48, 0.42 / 0.10 / 0.01 / 0.53, 0.63 / 0.30 / 0.22 / 0.37,
 0.57 / 0.43 / 0.11 / 0.43; q = 3: 0.44 / 0.51 / 0.16 / 0.58, 0.60 / 0.37 / 0.35 / 0.76, 0.48 / 0.10 / 0.05 / 0.68, 0.79 / 0.80 / 0.25 / 0.72. Verschiedene Anfangsgewichte finden verschiedene Abbildungen derselben Fläche.
 
-**Out-of-sample** (letzte 20 % zurückgehalten, 4 feste Seeds; Autoencoder / UMAP / PaCMAP-Behelf / t-SNE-Näherung, R² der neuen Touren): 0.66 / 0.88 / 0.79 / 0.79, 0.75 / 0.93 / 0.91 / 0.69, 0.62 / 0.88 / 0.84 / 0.74, 0.69 / 0.93 / 0.82 / 0.85; Rekonstruktionsfehler
-Training / neue Touren des Autoencoders: 0.018 / 0.36, 0.025 / 0.10, 0.022 / 0.30, 0.023 / 0.15. Der Encoder verschiebt die Trainings-Einbettung nicht (bei UMAP, PaCMAP und t-SNE ändert sich beim Neu-Rechnen das Bild).
+**Out-of-sample** (letzte 20 % zurückgehalten, 4 feste Seeds; Autoencoder / UMAP / PaCMAP-Behelf / t-SNE-Näherung, R² der neuen Touren): 0.65 / 0.88 / 0.79 / 0.77, 0.74 / 0.93 / 0.91 / 0.67, 0.62 / 0.88 / 0.84 / 0.72, 0.69 / 0.93 / 0.82 / 0.85; Rekonstruktionsfehler
+Training / neue Touren des Autoencoders: 0.018 / 0.36, 0.026 / 0.10, 0.022 / 0.30, 0.023 / 0.15. Der Encoder verschiebt die Trainings-Einbettung nicht (bei UMAP, PaCMAP und t-SNE ändert sich beim Neu-Rechnen das Bild).
 
 **Rechenzeit** (lokale Messung, Standard-Einstellungen; Autoencoder-Training / PaCMAP / UMAP / t-SNE; Encoder für 1000 neue Touren ≈ 1 ms): n = 100: 0.36 s / 0.07 s / 0.32 s / 0.08 s; n = 200: 0.52 / 0.16 / 0.49 / 0.24; n = 400: 0.77 / 0.26 / 0.93 / 2.3; n = 600: **1.08 / 0.37 / 1.34 / 4.8**.
 

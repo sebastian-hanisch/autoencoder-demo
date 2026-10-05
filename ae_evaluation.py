@@ -197,7 +197,8 @@ def anomaly_auc(errors, outlier_mask):
     k = int(outlier_mask.sum())
     if k == 0 or k == len(errors):
         return None
-    ranks = errors.argsort().argsort() + 1
+    _, inverse, counts = np.unique(errors, return_inverse=True, return_counts=True)
+    ranks = (np.cumsum(counts) - (counts - 1) / 2.0)[inverse.ravel()]          # Mittelrang bei Gleichständen (wie sklearn roc_auc_score)
     return float((ranks[outlier_mask].sum() - k * (k + 1) / 2) / (k * (len(errors) - k)))
 
 
@@ -287,7 +288,8 @@ def out_of_sample(dataset, settings, fraction=C.HOLDOUT_FRACTION):
 
     def r2_new(train_emb, y):
         beta, *_ = np.linalg.lstsq(_quad_features(train_emb), dataset.z[train], rcond=None)
-        return float(1 - (z_test - _quad_features(y) @ beta).var(0).sum() / z_test.var(0).sum())
+        resid = z_test - _quad_features(y) @ beta                                                          # nicht zentrieren: ein konstanter Versatz der Vorhersage zählt als Fehler
+        return float(1 - (resid ** 2).sum() / ((z_test - z_test.mean(0)) ** 2).sum())
     ae = run_ae(dataset.X[train], settings)
     y_ae = encode(ae, dataset.X[test])
     _, err_test = reconstruct(ae, dataset.X[test])
