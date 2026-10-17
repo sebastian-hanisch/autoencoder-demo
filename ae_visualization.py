@@ -1,11 +1,23 @@
 """Plotly-Visualisierungen der Autoencoder-Demo: Architektur, eine Tour hindurch, Einbettungen, Trainingsverlauf, Sweeps, Hauptwinkel zur PCA, Decoder-Gitter, Fehlerkarte, Abstandstreue, Stabilitätsvergleich,
 Out-of-sample und Rechenzeit. Alle Figuren laufen durch `lock_axes` (Touch-Scrolling-Konvention des Portfolios: keine Zoom-/Pan-Gesten im Chart)."""
 
+import math
+
 import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 BLUE, ORANGE, GREEN, RED, GRAY, PURPLE = "#1f77b4", "#d68a2e", "#2ca02c", "#d62728", "#8a8f98", "#8e5fbf"
+
+
+def _log_note(fig, text, position, axis, value, xref, yref):
+    """Beschriftung einer Referenzlinie in einem Unterdiagramm mit logarithmischer Achse: die Linie liegt auf dem Datenwert (add_hline/add_vline ohne Beschriftung),
+    die Beschriftung braucht log10 des Werts entlang der logarithmischen Achse (xref/yref: Achse des Unterdiagramms, "x domain" und "y domain" für die andere Richtung)."""
+    top, left = "top" in position, "left" in position
+    if axis == "y":
+        fig.add_annotation(xref=xref, yref=yref, x=0 if left else 1, y=math.log10(value), text=text, showarrow=False, xanchor="left" if left else "right", yanchor="bottom" if top else "top")
+    else:
+        fig.add_annotation(xref=xref, yref=yref, x=math.log10(value), y=1 if top else 0, text=text, showarrow=False, xanchor="right" if left else "left", yanchor="top" if top else "bottom")
 
 
 def lock_axes(fig):
@@ -76,7 +88,8 @@ def build_training(loss_history, mse_floor, snapshot_r2, snapshot_far, marker=No
     fig = make_subplots(rows=1, cols=3, subplot_titles=("Rekonstruktionsfehler (MSE)", "R² der wahren Faktoren", "Abstandstreue ferner Paare"))
     epochs = np.arange(len(loss_history))                                  # Index k = nach k Epochen (0 fällt auf der Log-Achse weg)
     fig.add_trace(go.Scatter(x=epochs, y=loss_history, mode="lines", line=dict(color=BLUE, width=3), showlegend=False, hovertemplate="Epoche %{x}: %{y:.3f}<extra></extra>"), row=1, col=1)
-    fig.add_hline(y=mse_floor, line_dash="dash", line_color=RED, row=1, col=1, annotation_text="PCA-Untergrenze", annotation_position="top right")
+    fig.add_hline(y=mse_floor, line_dash="dash", line_color=RED, row=1, col=1)
+    _log_note(fig, "PCA-Untergrenze", "top right", "y", mse_floor, "x domain", "y")
     r2, far = sorted(snapshot_r2.items()), sorted(snapshot_far.items())
     fig.add_trace(go.Scatter(x=[max(e, 1) for e, _ in r2], y=[v for _, v in r2], mode="lines+markers", line=dict(color=PURPLE, width=3), showlegend=False, hovertemplate="Epoche %{x}: %{y:.2f}<extra></extra>"), row=1, col=2)
     fig.add_trace(go.Scatter(x=[max(e, 1) for e, _ in far], y=[v for _, v in far], mode="lines+markers", line=dict(color=ORANGE, width=3), showlegend=False, hovertemplate="Epoche %{x}: %{y:.2f}<extra></extra>"), row=1, col=3)
@@ -97,7 +110,8 @@ def build_sweep(rows, xkey, current, xtitle, mse_floor, log=False):
     fig = make_subplots(rows=1, cols=2, subplot_titles=("R² der wahren Faktoren (± Streuung)", "Rekonstruktionsfehler (log)"))
     fig.add_trace(go.Scatter(x=xs, y=[r["r2"] for r in rows], error_y=dict(type="data", array=[r["r2_std"] for r in rows], visible=True), mode="lines+markers", line=dict(color=PURPLE, width=3), name="R²"), row=1, col=1)
     fig.add_trace(go.Scatter(x=xs, y=[r["mse"] for r in rows], mode="lines+markers", line=dict(color=BLUE, width=3), name="MSE"), row=1, col=2)
-    fig.add_hline(y=mse_floor, line_dash="dash", line_color=RED, row=1, col=2, annotation_text="PCA-Untergrenze", annotation_position="top right")
+    fig.add_hline(y=mse_floor, line_dash="dash", line_color=RED, row=1, col=2)
+    _log_note(fig, "PCA-Untergrenze", "top right", "y", mse_floor, "x2 domain", "y2")
     for col in (1, 2):
         if current is not None:
             fig.add_vline(x=current, line_dash="dot", line_color=GRAY, row=1, col=col)
